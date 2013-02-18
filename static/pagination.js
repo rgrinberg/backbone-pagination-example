@@ -52,9 +52,7 @@ $(document).ready( function () {
 
     var UsersView = Backbone.View.extend({
         el : $('#users'),  // dom element displaying users
-        events: {
-            'click button#next' : 'nextPage'
-        },
+        events: { 'click button#next' : 'nextPage' },
         initialize: function() { 
             // make this refer to UsersView in the methods below
             _.bindAll(this, 'appendUser', 'render', 'nextPage');
@@ -79,9 +77,7 @@ $(document).ready( function () {
         appendUser: function(user){
             $('ul', this.el).append("<li>" + user.fullInfo() + "</li>");
         },
-        nextPage: function() {
-            this.collection.nextPage();
-        }
+        nextPage: function() { this.collection.nextPage(); }
     });
     usersView = new UsersView();
 });
