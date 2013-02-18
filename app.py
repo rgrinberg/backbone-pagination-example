@@ -24,6 +24,9 @@ class User(object):
 
 def generate_cursor(users):
     """ Generate a cursor from a list of User objects """ 
+    # we sometimes return an empty cursor to show that the next button isn't
+    # always there
+    if randint(0,1) == 0: return ''
     # This is simple (and crude) enough for us
     # random character selected form every name. a space counts as an 'x'
     first  = "".join(map(lambda u: choice(u.name), users)).replace(' ','x')

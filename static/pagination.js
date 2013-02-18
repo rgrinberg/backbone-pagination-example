@@ -64,7 +64,13 @@ $(document).ready( function () {
             this.collection.bind('reset', _.bind(this.render, this));
         },
         render: function() {
-            $(this.el).html("<button id='next'>Next page</button><ul></ul>");
+            html = "<ul></ul>"
+            // cursor is not always present so we must render the button
+            // conditionally
+            if (this.collection.hasCursor())
+                html += "<button id='next'>Next page</button>";
+
+            $(this.el).html(html);
             var self = this;
             _(this.collection.models).each(function (user) {
                 self.appendUser(user);
