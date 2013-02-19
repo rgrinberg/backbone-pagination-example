@@ -1,3 +1,34 @@
+// paging mixin
+function pagingMixin(self, baseUrl, specializedParse) {
+    if(self._meta == null) self._meta = {};
+    
+    return pagingMixin = {
+        getCursor: function ()  { return this._meta['cursor'] },
+        setCursor: function (c) { this._meta['cursor'] = c; return this },
+        hasCursor: function ()  { return this.getCursor() !== '' },
+        // add cursor to url if there is a cursor
+        appendCursorToUrl: function (url) {
+            if(this.hasCursor()) {
+                return url + "/" + this.getCursor();
+            }
+            return url;
+        },
+
+        // load the next page of users with the cursor object this collection
+        // contains
+        nextPage: function () {
+            this.url = this.appendCursorToUrl(baseUrl);
+            console.log("fetching with url: " + this.url);
+            this.fetch();
+        },
+        parse: function(resp) {
+            this.setCursor(resp.cursor);
+            console.log("Set cursor:" + this.getCursor());
+            return specializedParse(resp);
+        }
+    };
+}
+
 // this code is an awful example of writing good javascript
 $(document).ready( function () {
     // define a user model and give it some simple method
