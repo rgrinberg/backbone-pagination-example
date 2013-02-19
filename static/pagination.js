@@ -42,42 +42,21 @@ $(document).ready( function () {
     var Users = Backbone.Collection.extend({
         model: User,
 
-        getBaseUrl: function () { return '/users'; },
+        baseUrl: '/users',
 
         // intialize with an empty cursor and a base url. then fetch
         initialize: function () {
-            this._meta = {'cursor' : '' }; // pointer to next page
-            this.url = this.getBaseUrl();
-            this.fetch();
-        },
+            this.url = this.baseUrl;
 
-        getCursor: function () { return this._meta['cursor'] },
-        setCursor: function (c) { this._meta['cursor'] = c; return this },
-        hasCursor: function () { return this.getCursor() !== '' },
-
-        // add cursor to url if there is a cursor
-        appendCursorToUrl: function (url) {
-            if(this.hasCursor()) {
-                return url + "/" + this.getCursor();
-            }
-            return url;
-        },
-
-        // load the next page of users with the cursor object this collection
-        // contains
-        nextPage: function () {
-            this.url = this.appendCursorToUrl(this.getBaseUrl());
-            console.log("fetching with url: " + this.url);
-            this.fetch();
-        },
-
-        // read a cursor + a collection of users from the raw response
-        parse: function (response) {
-            console.log("obtained cursor: " + response.cursor);
-            this.setCursor(response.cursor);
-            return _(response.users).map(function (u) {
-                return new User(u);
+            var mixin = pagingMixin(this, this.baseUrl, function (resp) {
+                // specialized parsing routine
+                return _(resp.users).map(function (u) {
+                    return new User(u);
+                });
             });
+            _.extend(this.__proto__, mixin);
+
+            this.fetch();
         },
     });
 
